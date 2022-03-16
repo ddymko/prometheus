@@ -358,6 +358,11 @@ scrape_configs:
         username: gopher
         password: hole
 
+  - job_name: vultr
+    vultr_sd_configs:
+      - authorization:
+          credentials: abcdef
+
 alerting:
   alertmanagers:
     - scheme: https

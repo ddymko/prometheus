@@ -32,6 +32,7 @@ require (
 	github.com/grafana/regexp v0.0.0-20220202152315-e74e38789280
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/hashicorp/consul/api v1.12.0
+	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-hclog v0.12.2 // indirect
 	github.com/hashicorp/go-immutable-radix v1.2.0 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
@@ -57,6 +58,7 @@ require (
 	github.com/scaleway/scaleway-sdk-go v1.0.0-beta.9
 	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749
 	github.com/stretchr/testify v1.7.0
+	github.com/vultr/govultr/v2 v2.14.1
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.29.0
 	go.opentelemetry.io/otel v1.4.1
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.4.1

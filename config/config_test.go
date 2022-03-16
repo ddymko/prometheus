@@ -50,6 +50,7 @@ import (
 	"github.com/prometheus/prometheus/discovery/targetgroup"
 	"github.com/prometheus/prometheus/discovery/triton"
 	"github.com/prometheus/prometheus/discovery/uyuni"
+	"github.com/prometheus/prometheus/discovery/vultr"
 	"github.com/prometheus/prometheus/discovery/xds"
 	"github.com/prometheus/prometheus/discovery/zookeeper"
 	"github.com/prometheus/prometheus/model/labels"
@@ -960,6 +961,31 @@ var expectedConf = &Config{
 					Password:        "hole",
 					Entitlement:     "monitoring_entitled",
 					Separator:       ",",
+					RefreshInterval: model.Duration(60 * time.Second),
+				},
+			},
+		},
+		{
+			JobName: "vultr-instances",
+
+			HonorTimestamps: true,
+			ScrapeInterval:  model.Duration(15 * time.Second),
+			ScrapeTimeout:   DefaultGlobalConfig.ScrapeTimeout,
+
+			MetricsPath:      DefaultScrapeConfig.MetricsPath,
+			Scheme:           DefaultScrapeConfig.Scheme,
+			HTTPClientConfig: config.DefaultHTTPClientConfig,
+
+			ServiceDiscoveryConfigs: discovery.Configs{
+				&vultr.SDConfig{
+					HTTPClientConfig: config.HTTPClientConfig{
+						Authorization: &config.Authorization{
+							Type:        "Bearer",
+							Credentials: "abcdef",
+						},
+						FollowRedirects: true,
+					},
+					Port:            80,
 					RefreshInterval: model.Duration(60 * time.Second),
 				},
 			},
