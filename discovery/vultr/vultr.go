@@ -42,7 +42,7 @@ const (
 	vultrInstanceLabelDisk         = vultrInstanceLabel + "disk_gb"
 	separator                      = ","
 
-	//vultrInstanceLabelSize = vultrInstanceLabel + "size"
+	// vultrInstanceLabelSize = vultrInstanceLabel + "size"
 )
 
 // DefaultSDConfig is the default Linode SD configuration.
@@ -182,7 +182,6 @@ func (d *Discovery) refresh(ctx context.Context) ([]*targetgroup.Group, error) {
 }
 
 func (d *Discovery) listInstances(ctx context.Context) ([]govultr.Instance, error) {
-
 	var instances []govultr.Instance
 
 	listOptions := &govultr.ListOptions{
