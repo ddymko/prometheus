@@ -62,6 +62,7 @@ func TestVultrSDRefresh(t *testing.T) {
 			"__meta_vultr_instance_private_ipv4":    model.LabelValue("10.1.96.5"),
 			"__meta_vultr_instance_public_ipv6":     model.LabelValue(""),
 			"__meta_vultr_instance_features":        model.LabelValue(",backups,"),
+			"__meta_vultr_instance_tags":            model.LabelValue(",tag1,tag2,tag3,"),
 			"__meta_vultr_instance_tag":             model.LabelValue(""),
 			"__meta_vultr_instance_hostname":        model.LabelValue("np-2-eae38a19b0f3"),
 			"__meta_vultr_instance_server_status":   model.LabelValue("ok"),

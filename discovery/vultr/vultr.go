@@ -32,7 +32,8 @@ const (
 	vultrInstanceLabelMainIPV6     = vultrInstanceLabel + "public_ipv6"
 	vultrInstanceLabelPrivateIPv4  = vultrInstanceLabel + "private_ipv4"
 	vultrInstanceLabelFeatures     = vultrInstanceLabel + "features"
-	vultrInstanceLabelTags         = vultrInstanceLabel + "tag"
+	vultrInstanceLabelTag          = vultrInstanceLabel + "tag"
+	vultrInstanceLabelTags         = vultrInstanceLabel + "tags"
 	vultrInstanceLabelHostname     = vultrInstanceLabel + "hostname"
 	vultrInstanceLabelServerStatus = vultrInstanceLabel + "server_status"
 	vultrInstanceLabelVCPU         = vultrInstanceLabel + "vcpu_count"
@@ -154,7 +155,7 @@ func (d *Discovery) refresh(ctx context.Context) ([]*targetgroup.Group, error) {
 			vultrInstanceLabelMainIPV4:     model.LabelValue(instance.MainIP),
 			vultrInstanceLabelMainIPV6:     model.LabelValue(instance.V6MainIP),
 			vultrInstanceLabelPrivateIPv4:  model.LabelValue(instance.InternalIP),
-			vultrInstanceLabelTags:         model.LabelValue(instance.Tag),
+			vultrInstanceLabelTag:          model.LabelValue(instance.Tag),
 			vultrInstanceLabelHostname:     model.LabelValue(instance.Hostname),
 			vultrInstanceLabelServerStatus: model.LabelValue(instance.ServerStatus),
 		}
@@ -162,11 +163,16 @@ func (d *Discovery) refresh(ctx context.Context) ([]*targetgroup.Group, error) {
 		addr := net.JoinHostPort(instance.MainIP, strconv.FormatUint(uint64(d.port), 10))
 		labels[model.AddressLabel] = model.LabelValue(addr)
 
+		// We surround the separated list with the separator as well. This way regular expressions
+		// in relabeling rules don't have to consider feature positions.
 		if len(instance.Features) > 0 {
-			// We surround the separated list with the separator as well. This way regular expressions
-			// in relabeling rules don't have to consider feature positions.
 			features := separator + strings.Join(instance.Features, separator) + separator
 			labels[vultrInstanceLabelFeatures] = model.LabelValue(features)
+		}
+
+		if len(instance.Tags) > 0 {
+			tags := separator + strings.Join(instance.Tags, separator) + separator
+			labels[vultrInstanceLabelTags] = model.LabelValue(tags)
 		}
 
 		tg.Targets = append(tg.Targets, labels)

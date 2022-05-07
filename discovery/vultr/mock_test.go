@@ -81,7 +81,8 @@ func (m *SDMock) HandleInstanceList() {
             "app_id": 0,
             "image_id": "vke-worker",
             "firewall_group_id": "",
-            "features": ["backups"]
+            "features": ["backups"],
+            "tags": ["tag1", "tag2", "tag3"]
         },
         {
             "id": "fccb117c-62f7-4b17-995d-a8e56dd30b33",
@@ -111,7 +112,8 @@ func (m *SDMock) HandleInstanceList() {
             "app_id": 0,
             "image_id": "vke-worker",
             "firewall_group_id": "",
-            "features": []
+            "features": [],
+            "tags": []
         },
         {
             "id": "c4e58767-f61b-4c5e-9bce-43761cc04868",
@@ -141,7 +143,8 @@ func (m *SDMock) HandleInstanceList() {
             "app_id": 0,
             "image_id": "vke-worker",
             "firewall_group_id": "",
-            "features": []
+            "features": [],
+            "tags": []
         }
     ],
     "meta": {
