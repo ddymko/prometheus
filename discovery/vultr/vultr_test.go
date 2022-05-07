@@ -3,11 +3,12 @@ package vultr
 import (
 	"context"
 	"fmt"
+	"net/url"
+	"testing"
+
 	"github.com/go-kit/log"
 	"github.com/prometheus/common/model"
 	"github.com/stretchr/testify/require"
-	"net/url"
-	"testing"
 )
 
 type VultrSDTestSuite struct {
