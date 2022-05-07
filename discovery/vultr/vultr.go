@@ -32,7 +32,6 @@ const (
 	vultrInstanceLabelMainIPV6     = vultrInstanceLabel + "public_ipv6"
 	vultrInstanceLabelPrivateIPv4  = vultrInstanceLabel + "private_ipv4"
 	vultrInstanceLabelFeatures     = vultrInstanceLabel + "features"
-	vultrInstanceLabelTag          = vultrInstanceLabel + "tag"
 	vultrInstanceLabelTags         = vultrInstanceLabel + "tags"
 	vultrInstanceLabelHostname     = vultrInstanceLabel + "hostname"
 	vultrInstanceLabelServerStatus = vultrInstanceLabel + "server_status"
@@ -155,7 +154,6 @@ func (d *Discovery) refresh(ctx context.Context) ([]*targetgroup.Group, error) {
 			vultrInstanceLabelMainIPV4:     model.LabelValue(instance.MainIP),
 			vultrInstanceLabelMainIPV6:     model.LabelValue(instance.V6MainIP),
 			vultrInstanceLabelPrivateIPv4:  model.LabelValue(instance.InternalIP),
-			vultrInstanceLabelTag:          model.LabelValue(instance.Tag),
 			vultrInstanceLabelHostname:     model.LabelValue(instance.Hostname),
 			vultrInstanceLabelServerStatus: model.LabelValue(instance.ServerStatus),
 		}
