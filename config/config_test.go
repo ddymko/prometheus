@@ -14,8 +14,8 @@
 package config
 
 import (
+	"crypto/tls"
 	"encoding/json"
-	"io/ioutil"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -50,6 +50,7 @@ import (
 	"github.com/prometheus/prometheus/discovery/targetgroup"
 	"github.com/prometheus/prometheus/discovery/triton"
 	"github.com/prometheus/prometheus/discovery/uyuni"
+	"github.com/prometheus/prometheus/discovery/vultr"
 	"github.com/prometheus/prometheus/discovery/xds"
 	"github.com/prometheus/prometheus/discovery/zookeeper"
 	"github.com/prometheus/prometheus/model/labels"
@@ -109,6 +110,7 @@ var expectedConf = &Config{
 					},
 				},
 				FollowRedirects: true,
+				EnableHTTP2:     true,
 			},
 		},
 		{
@@ -123,6 +125,7 @@ var expectedConf = &Config{
 					KeyFile:  filepath.FromSlash("testdata/valid_key_file"),
 				},
 				FollowRedirects: true,
+				EnableHTTP2:     true,
 			},
 			Headers: map[string]string{"name": "value"},
 		},
@@ -130,11 +133,14 @@ var expectedConf = &Config{
 
 	RemoteReadConfigs: []*RemoteReadConfig{
 		{
-			URL:                  mustParseURL("http://remote1/read"),
-			RemoteTimeout:        model.Duration(1 * time.Minute),
-			ReadRecent:           true,
-			Name:                 "default",
-			HTTPClientConfig:     config.DefaultHTTPClientConfig,
+			URL:           mustParseURL("http://remote1/read"),
+			RemoteTimeout: model.Duration(1 * time.Minute),
+			ReadRecent:    true,
+			Name:          "default",
+			HTTPClientConfig: config.HTTPClientConfig{
+				FollowRedirects: true,
+				EnableHTTP2:     false,
+			},
 			FilterExternalLabels: true,
 		},
 		{
@@ -149,6 +155,7 @@ var expectedConf = &Config{
 					KeyFile:  filepath.FromSlash("testdata/valid_key_file"),
 				},
 				FollowRedirects: true,
+				EnableHTTP2:     true,
 			},
 			FilterExternalLabels: true,
 		},
@@ -172,6 +179,10 @@ var expectedConf = &Config{
 					CredentialsFile: filepath.FromSlash("testdata/valid_token_file"),
 				},
 				FollowRedirects: true,
+				EnableHTTP2:     true,
+				TLSConfig: config.TLSConfig{
+					MinVersion: config.TLSVersion(tls.VersionTLS10),
+				},
 			},
 
 			ServiceDiscoveryConfigs: discovery.Configs{
@@ -243,6 +254,7 @@ var expectedConf = &Config{
 					Password: "multiline\nmysecret\ntest",
 				},
 				FollowRedirects: true,
+				EnableHTTP2:     true,
 			},
 			MetricsPath: "/my_path",
 			Scheme:      "https",
@@ -348,6 +360,7 @@ var expectedConf = &Config{
 							InsecureSkipVerify: false,
 						},
 						FollowRedirects: true,
+						EnableHTTP2:     true,
 					},
 				},
 			},
@@ -385,6 +398,7 @@ var expectedConf = &Config{
 				},
 
 				FollowRedirects: true,
+				EnableHTTP2:     true,
 			},
 		},
 		{
@@ -412,6 +426,7 @@ var expectedConf = &Config{
 							KeyFile:  filepath.FromSlash("testdata/valid_key_file"),
 						},
 						FollowRedirects: true,
+						EnableHTTP2:     true,
 					},
 					NamespaceDiscovery: kubernetes.NamespaceDiscovery{},
 				},
@@ -432,6 +447,7 @@ var expectedConf = &Config{
 					PasswordFile: filepath.FromSlash("testdata/valid_password_file"),
 				},
 				FollowRedirects: true,
+				EnableHTTP2:     true,
 			},
 
 			ServiceDiscoveryConfigs: discovery.Configs{
@@ -491,6 +507,7 @@ var expectedConf = &Config{
 							KeyFile:  filepath.FromSlash("testdata/valid_key_file"),
 						},
 						FollowRedirects: true,
+						EnableHTTP2:     true,
 					},
 				},
 			},
@@ -564,6 +581,7 @@ var expectedConf = &Config{
 				&azure.SDConfig{
 					Environment:          "AzurePublicCloud",
 					SubscriptionID:       "11AAAA11-A11A-111A-A111-1111A1111A11",
+					ResourceGroup:        "my-resource-group",
 					TenantID:             "BBBB222B-B2B2-2B22-B222-2BB2222BB2B2",
 					ClientID:             "333333CC-3C33-3333-CCC3-33C3CCCCC33C",
 					ClientSecret:         "mysecret",
@@ -724,6 +742,7 @@ var expectedConf = &Config{
 							Credentials: "abcdef",
 						},
 						FollowRedirects: true,
+						EnableHTTP2:     true,
 					},
 					Port:            80,
 					RefreshInterval: model.Duration(60 * time.Second),
@@ -820,6 +839,7 @@ var expectedConf = &Config{
 					RefreshInterval:   model.Duration(60 * time.Second),
 					HTTPClientConfig: config.HTTPClientConfig{
 						FollowRedirects: true,
+						EnableHTTP2:     true,
 						TLSConfig: config.TLSConfig{
 							CAFile:   "testdata/valid_ca_file",
 							CertFile: "testdata/valid_cert_file",
@@ -839,6 +859,17 @@ var expectedConf = &Config{
 			Scheme:           DefaultScrapeConfig.Scheme,
 			HTTPClientConfig: config.DefaultHTTPClientConfig,
 
+			RelabelConfigs: []*relabel.Config{
+				{
+					Action:       relabel.Uppercase,
+					Regex:        relabel.DefaultRelabelConfig.Regex,
+					Replacement:  relabel.DefaultRelabelConfig.Replacement,
+					Separator:    relabel.DefaultRelabelConfig.Separator,
+					SourceLabels: model.LabelNames{"instance"},
+					TargetLabel:  "instance",
+				},
+			},
+
 			ServiceDiscoveryConfigs: discovery.Configs{
 				&hetzner.SDConfig{
 					HTTPClientConfig: config.HTTPClientConfig{
@@ -847,6 +878,7 @@ var expectedConf = &Config{
 							Credentials: "abcdef",
 						},
 						FollowRedirects: true,
+						EnableHTTP2:     true,
 					},
 					Port:            80,
 					RefreshInterval: model.Duration(60 * time.Second),
@@ -856,6 +888,7 @@ var expectedConf = &Config{
 					HTTPClientConfig: config.HTTPClientConfig{
 						BasicAuth:       &config.BasicAuth{Username: "abcdef", Password: "abcdef"},
 						FollowRedirects: true,
+						EnableHTTP2:     true,
 					},
 					Port:            80,
 					RefreshInterval: model.Duration(60 * time.Second),
@@ -888,16 +921,15 @@ var expectedConf = &Config{
 			HonorTimestamps:  true,
 			ScrapeInterval:   model.Duration(15 * time.Second),
 			ScrapeTimeout:    DefaultGlobalConfig.ScrapeTimeout,
-			HTTPClientConfig: config.HTTPClientConfig{FollowRedirects: true},
-
-			MetricsPath: DefaultScrapeConfig.MetricsPath,
-			Scheme:      DefaultScrapeConfig.Scheme,
+			HTTPClientConfig: config.DefaultHTTPClientConfig,
+			MetricsPath:      DefaultScrapeConfig.MetricsPath,
+			Scheme:           DefaultScrapeConfig.Scheme,
 
 			ServiceDiscoveryConfigs: discovery.Configs{
 				&scaleway.SDConfig{
 					APIURL:           "https://api.scaleway.com",
 					AccessKey:        "SCWXXXXXXXXXXXXXXXXX",
-					HTTPClientConfig: config.HTTPClientConfig{FollowRedirects: true},
+					HTTPClientConfig: config.DefaultHTTPClientConfig,
 					Port:             80,
 					Project:          "11111111-1111-1111-1111-111111111112",
 					RefreshInterval:  model.Duration(60 * time.Second),
@@ -908,7 +940,7 @@ var expectedConf = &Config{
 				&scaleway.SDConfig{
 					APIURL:           "https://api.scaleway.com",
 					AccessKey:        "SCWXXXXXXXXXXXXXXXXX",
-					HTTPClientConfig: config.HTTPClientConfig{FollowRedirects: true},
+					HTTPClientConfig: config.DefaultHTTPClientConfig,
 					Port:             80,
 					Project:          "11111111-1111-1111-1111-111111111112",
 					RefreshInterval:  model.Duration(60 * time.Second),
@@ -937,6 +969,7 @@ var expectedConf = &Config{
 							Credentials: "abcdef",
 						},
 						FollowRedirects: true,
+						EnableHTTP2:     true,
 					},
 					Port:            80,
 					TagSeparator:    linode.DefaultSDConfig.TagSeparator,
@@ -950,7 +983,7 @@ var expectedConf = &Config{
 			HonorTimestamps:  true,
 			ScrapeInterval:   model.Duration(15 * time.Second),
 			ScrapeTimeout:    DefaultGlobalConfig.ScrapeTimeout,
-			HTTPClientConfig: config.HTTPClientConfig{FollowRedirects: true},
+			HTTPClientConfig: config.DefaultHTTPClientConfig,
 			MetricsPath:      DefaultScrapeConfig.MetricsPath,
 			Scheme:           DefaultScrapeConfig.Scheme,
 			ServiceDiscoveryConfigs: discovery.Configs{
@@ -960,6 +993,31 @@ var expectedConf = &Config{
 					Password:        "hole",
 					Entitlement:     "monitoring_entitled",
 					Separator:       ",",
+					RefreshInterval: model.Duration(60 * time.Second),
+				},
+			},
+		},
+		{
+			JobName: "vultr-instances",
+
+			HonorTimestamps: true,
+			ScrapeInterval:  model.Duration(15 * time.Second),
+			ScrapeTimeout:   DefaultGlobalConfig.ScrapeTimeout,
+
+			MetricsPath:      DefaultScrapeConfig.MetricsPath,
+			Scheme:           DefaultScrapeConfig.Scheme,
+			HTTPClientConfig: config.DefaultHTTPClientConfig,
+
+			ServiceDiscoveryConfigs: discovery.Configs{
+				&vultr.SDConfig{
+					HTTPClientConfig: config.HTTPClientConfig{
+						Authorization: &config.Authorization{
+							Type:        "Bearer",
+							Credentials: "abcdef",
+						},
+						FollowRedirects: true,
+					},
+					Port:            80,
 					RefreshInterval: model.Duration(60 * time.Second),
 				},
 			},
@@ -1175,6 +1233,30 @@ var expectedErrors = []struct {
 	{
 		filename: "labelmap.bad.yml",
 		errMsg:   "\"l-$1\" is invalid 'replacement' for labelmap action",
+	},
+	{
+		filename: "lowercase.bad.yml",
+		errMsg:   "relabel configuration for lowercase action requires 'target_label' value",
+	},
+	{
+		filename: "lowercase2.bad.yml",
+		errMsg:   "\"42lab\" is invalid 'target_label' for lowercase action",
+	},
+	{
+		filename: "lowercase3.bad.yml",
+		errMsg:   "'replacement' can not be set for lowercase action",
+	},
+	{
+		filename: "uppercase.bad.yml",
+		errMsg:   "relabel configuration for uppercase action requires 'target_label' value",
+	},
+	{
+		filename: "uppercase2.bad.yml",
+		errMsg:   "\"42lab\" is invalid 'target_label' for uppercase action",
+	},
+	{
+		filename: "uppercase3.bad.yml",
+		errMsg:   "'replacement' can not be set for uppercase action",
 	},
 	{
 		filename: "rules.bad.yml",
@@ -1488,7 +1570,7 @@ func TestBadConfigs(t *testing.T) {
 }
 
 func TestBadStaticConfigsJSON(t *testing.T) {
-	content, err := ioutil.ReadFile("testdata/static_config.bad.json")
+	content, err := os.ReadFile("testdata/static_config.bad.json")
 	require.NoError(t, err)
 	var tg targetgroup.Group
 	err = json.Unmarshal(content, &tg)
@@ -1496,7 +1578,7 @@ func TestBadStaticConfigsJSON(t *testing.T) {
 }
 
 func TestBadStaticConfigsYML(t *testing.T) {
-	content, err := ioutil.ReadFile("testdata/static_config.bad.yml")
+	content, err := os.ReadFile("testdata/static_config.bad.yml")
 	require.NoError(t, err)
 	var tg targetgroup.Group
 	err = yaml.UnmarshalStrict(content, &tg)
