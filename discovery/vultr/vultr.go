@@ -41,9 +41,9 @@ const (
 	vultrInstanceLabelOSID         = vultrInstanceLabel + "os_id"
 	vultrInstanceLabelRegion       = vultrInstanceLabel + "region"
 	vultrInstanceLabelPlan         = vultrInstanceLabel + "plan"
-	vultrInstanceLabelMainIPV4     = vultrInstanceLabel + "public_ipv4"
-	vultrInstanceLabelMainIPV6     = vultrInstanceLabel + "public_ipv6"
-	vultrInstanceLabelPrivateIPv4  = vultrInstanceLabel + "private_ipv4"
+	vultrInstanceLabelMainIP       = vultrInstanceLabel + "main_ip"
+	vultrInstanceLabelMainIPV6     = vultrInstanceLabel + "main_ipv6"
+	vultrInstanceLabelPrivateIPv4  = vultrInstanceLabel + "internal_ip"
 	vultrInstanceLabelFeatures     = vultrInstanceLabel + "features"
 	vultrInstanceLabelTags         = vultrInstanceLabel + "tags"
 	vultrInstanceLabelHostname     = vultrInstanceLabel + "hostname"
@@ -158,7 +158,7 @@ func (d *Discovery) refresh(ctx context.Context) ([]*targetgroup.Group, error) {
 			vultrInstanceLabelMemory:       model.LabelValue(strconv.Itoa(instance.RAM)),
 			vultrInstanceLabelBandwidth:    model.LabelValue(strconv.Itoa(instance.AllowedBandwidth)),
 			vultrInstanceLabelDisk:         model.LabelValue(strconv.Itoa(instance.Disk)),
-			vultrInstanceLabelMainIPV4:     model.LabelValue(instance.MainIP),
+			vultrInstanceLabelMainIP:       model.LabelValue(instance.MainIP),
 			vultrInstanceLabelMainIPV6:     model.LabelValue(instance.V6MainIP),
 			vultrInstanceLabelPrivateIPv4:  model.LabelValue(instance.InternalIP),
 			vultrInstanceLabelHostname:     model.LabelValue(instance.Hostname),

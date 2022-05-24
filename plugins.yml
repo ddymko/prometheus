@@ -16,5 +16,6 @@
 - github.com/prometheus/prometheus/discovery/scaleway
 - github.com/prometheus/prometheus/discovery/triton
 - github.com/prometheus/prometheus/discovery/uyuni
+- github.com/prometheus/prometheus/discovery/vultr
 - github.com/prometheus/prometheus/discovery/xds
 - github.com/prometheus/prometheus/discovery/zookeeper
